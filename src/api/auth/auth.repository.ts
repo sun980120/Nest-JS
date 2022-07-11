@@ -6,17 +6,13 @@ import {
     InternalServerErrorException,
 } from '@nestjs/common';
 
-import * as pbkdf2Password from 'pbkdf2-password';
-
 @EntityRepository(Auth)
 export class AuthRepository extends Repository<Auth> {
     async signUp(authCredentialsDto: AuthCredentialsDto): Promise<string> {
         const { email, username, password } = authCredentialsDto;
-        // const salt = await pbkdf2Password.genSalt();
-        // const hashedPassword = await pbkdf2Password.hash(password, salt);
-        const user = this.create({ email, username, hashedPassword });
+        const auth = this.create({ email, username, password });
         try {
-            await this.save(user);
+            await this.save(auth);
             return 'Create Auth';
         } catch (e) {
             if (e.code === '23505') {
